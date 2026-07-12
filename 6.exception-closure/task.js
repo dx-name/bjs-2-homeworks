@@ -12,9 +12,10 @@ function validateCount(value) {
   try {
     return parseCount(value);
   } catch (error) {
-    return error.message;
+    return error;
   }
 }
+
 
 class Triangle {
   constructor(a, b, c) {
