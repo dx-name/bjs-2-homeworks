@@ -34,7 +34,6 @@ class AlarmClock {
   }
 
   start() {
-    // Если уже запущен — ничего не делаем
     if (this.intervalId !== null) {
       return;
     }
