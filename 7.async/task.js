@@ -5,7 +5,7 @@ class AlarmClock {
   }
 
   addClock(time, callback) {
-    if (!time || !callback) {
+    if (time === undefined || time === null || callback === undefined || callback === null) {
       throw new Error('Отсутствуют обязательные аргументы');
     }
 
@@ -15,11 +15,13 @@ class AlarmClock {
       return;
     }
 
-    this.alarmCollection.push({
-      callback,
-      time,
+    const alarm = {
+      callback: callback,
+      time: time,
       canCall: true
-    });
+    };
+
+    this.alarmCollection.push(alarm);
   }
 
   removeClock(time) {
@@ -28,9 +30,11 @@ class AlarmClock {
 
   getCurrentFormattedTime() {
     const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
+    const h = now.getHours();
+    const m = now.getMinutes();
+    const hh = String(h).padStart(2, '0');
+    const mm = String(m).padStart(2, '0');
+    return `${hh}:${mm}`;
   }
 
   start() {
@@ -42,9 +46,13 @@ class AlarmClock {
       const currentTime = this.getCurrentFormattedTime();
 
       this.alarmCollection.forEach(alarm => {
-        if (alarm.time === currentTime && alarm.canCall) {
+        if (alarm.time === currentTime && alarm.canCall === true) {
           alarm.canCall = false;
-          alarm.callback();
+          try {
+            alarm.callback();
+          } catch (e) {
+            console.error('Ошибка в callback будильника:', e);
+          }
         }
       });
     }, 1000);
@@ -58,9 +66,9 @@ class AlarmClock {
   }
 
   resetAllCalls() {
-    this.alarmCollection.forEach(alarm => {
-      alarm.canCall = true;
-    });
+    for (let i = 0; i < this.alarmCollection.length; i++) {
+      this.alarmCollection[i].canCall = true;
+    }
   }
 
   clearAlarms() {
